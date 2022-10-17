@@ -17,7 +17,7 @@ import { resetAllParams } from "../../redux/tableFilter/tableFilterSlice";
 
 const TableControls = ({ data, disabled }: TControls) => {
   const dispatch = useAppDispatch();
-  const { currentPage: page } = useAppSelector((state) => state.books);
+  const { currentPage: page, result } = useAppSelector((state) => state.books);
   // const [formState, setFormState] = useState<filterProps>(initialState);
   const { filter, search } = useAppSelector((state) => state.tabFilter);
   const willUnmountOnce = useRef(true);
@@ -62,17 +62,17 @@ console.log(filter, "filter");
   };
 
   const resetFilters = () =>{
-    dispatch(resetAll())
     dispatch(resetAllParams())
+    dispatch(resetAll())
   }
   return (
     <div className="table__control">
       <span className="table__control--btn">
         <button>
-          Showing {search ? "results for" : ""}
-          <b>{search ? `${search}` : "All"}</b>
+          Showing {(search && result) ? "results for " : ""}
+          <b>{(search && result) ? `${search}` : "All"}</b>
         </button>
-        <button onClick={() => resetFilters()}>Reset Filters</button>
+       {filter !== "" && <button onClick={() => resetFilters()} className="reset_btn cursor-pointer">Reset Filters</button>}
       </span>
       <div className="select_container">
         <label>Search By</label>
@@ -93,9 +93,9 @@ console.log(filter, "filter");
             value={search}
             onChange={changeHandler}
             placeholder={`Search ${filter}`}
-            disabled={disabled}
+            disabled={!filter}
           />
-          <button className={``} disabled={!filter}>Search</button>
+          <button className={`cursor-pointer`} disabled={!filter}>Search</button>
         </div>
       </form>
     </div>

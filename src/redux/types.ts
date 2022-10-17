@@ -11,7 +11,7 @@ export type CharacterProps = {
 }
 export interface IBooksState{
     loading: boolean;
-    searchLoader: boolean;
+    result: boolean;
     books: BooksProps[];
     characters: CharacterProps[];
     error: string;
