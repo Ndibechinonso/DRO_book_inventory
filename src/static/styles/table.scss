@@ -45,8 +45,13 @@
       column-gap: 1.25rem;
     }
     &--btn {
+      display: flex;
+      gap: 20px;
       button {
         all: unset;
+        :last-child{
+          color: red;
+                }
       }
     }
   }
