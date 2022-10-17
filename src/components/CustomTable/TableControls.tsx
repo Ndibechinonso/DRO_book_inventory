@@ -3,21 +3,22 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { fetchSearchedBooks, fetchCharacters, fetchBooks } from "../../redux/books/booksAsyncThunk";
 import { filterProps, TControls } from "./types";
 import { filterOptions } from "./tableHeaders";
-import { changePageNumber, resetBooks } from "../../redux/books/booksSlice";
+import { changePageNumber, resetBooks, resetAll } from "../../redux/books/booksSlice";
 import {
   updateSearchValue,
   updateFilterParam,
 } from "../../redux/tableFilter/tableFilterSlice";
+import { resetAllParams } from "../../redux/tableFilter/tableFilterSlice";
 
-const initialState: filterProps = {
-  search: "",
-  filter: "",
-};
+// const initialState: filterProps = {
+//   search: "",
+//   filter: "",
+// };
 
-function TableControls({ data, disabled }: TControls) {
+const TableControls = ({ data, disabled }: TControls) => {
   const dispatch = useAppDispatch();
   const { currentPage: page } = useAppSelector((state) => state.books);
-  const [formState, setFormState] = useState<filterProps>(initialState);
+  // const [formState, setFormState] = useState<filterProps>(initialState);
   const { filter, search } = useAppSelector((state) => state.tabFilter);
   const willUnmountOnce = useRef(true);
   useEffect(() => {
@@ -25,14 +26,18 @@ function TableControls({ data, disabled }: TControls) {
       willUnmountOnce.current = false;
       return;
     }
-    return () => {
-      setFormState(initialState);
-    };
+    // return () => {
+    //   setFormState(initialState);
+    // };
   }, []);
 
+  useEffect(()=>{
+console.log(filter, "filter");
+
+  }, [filter])
   const filterBooks = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { filter, search } = formState;
+    // const { filter, search } = formState;
     dispatch(updateSearchValue(search));
     dispatch(updateFilterParam(filter));
     dispatch(resetBooks())
@@ -48,12 +53,18 @@ function TableControls({ data, disabled }: TControls) {
   };
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormState((prev) => ({ ...prev, search: e.target.value }));
+    dispatch(updateSearchValue(e.target.value))
+    // setFormState((prev) => ({ ...prev, search: e.target.value }));
   };
   const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormState((prev) => ({ ...prev, filter: e.target.value }));
+    // setFormState((prev) => ({ ...prev, filter: e.target.value }));
+    dispatch(updateFilterParam(e.target.value))
   };
 
+  const resetFilters = () =>{
+    dispatch(resetAll())
+    dispatch(resetAllParams())
+  }
   return (
     <div className="table__control">
       <span className="table__control--btn">
@@ -61,10 +72,11 @@ function TableControls({ data, disabled }: TControls) {
           Showing {search ? "results for" : ""}
           <b>{search ? `${search}` : "All"}</b>
         </button>
+        <button onClick={() => resetFilters()}>Reset Filters</button>
       </span>
       <div className="select_container">
         <label>Search By</label>
-        <select onChange={changeFilter}>
+        <select onChange={changeFilter} value={filter}>
           {filterOptions.map((filter, index) => (
             <option key={index} value={filter.value}>
               {filter.name}
@@ -78,12 +90,12 @@ function TableControls({ data, disabled }: TControls) {
           <input
             id="searchBox"
             name="search"
-            value={formState.search}
+            value={search}
             onChange={changeHandler}
             placeholder={`Search ${filter}`}
             disabled={disabled}
           />
-          <button className={``} disabled={!formState.filter}>Search</button>
+          <button className={``} disabled={!filter}>Search</button>
         </div>
       </form>
     </div>

@@ -65,5 +65,5 @@ builder.addCase(fetchBooks.pending, (state) =>{
     }
 })
 
-export const {changePageNumber, resetBooks} = slice.actions
+export const {changePageNumber, resetBooks, resetAll} = slice.actions
 export default slice.reducer
